@@ -1,0 +1,138 @@
+#!/usr/bin/env python3
+"""
+Cryptic Crawl - Director's Cut (Project 2 - Option A)
+Sean Doty, CSC 1001 - 2025
+
+Simple console dungeon of 5 riddle-rooms.
+Demonstrates:
+ - Parallel arrays (monsters, ascii_art, questions, answers)
+ - Nested loop (retries until correct)
+ - At least one function (ask_question)
+"""
+
+from typing import List
+
+# ---------------------------
+# Parallel arrays (data)
+# ---------------------------
+monsters: List[str] = ["Goblin", "Troll", "Dragon", "Witch", "Skeleton"]
+
+ascii_art: List[str] = [
+    # Goblin
+    r"""
+    (O_O)
+     <)   )>
+      || ||
+    """.strip(),
+    # Troll
+    r"""
+    (ಠ_ಠ)
+     /|_|\
+      / \
+    """.strip(),
+    # Dragon
+    r"""
+    /^\/^\
+     _|__|  O|
+    \/ _/\/_/
+    """.strip(),
+    # Witch
+    r"""
+    (¬‿¬)
+     /|\
+      / \
+    """.strip(),
+    # Skeleton
+    r"""
+    [¬º-°]¬
+      /|\
+      / \
+    """.strip()
+]
+
+questions: List[str] = [
+    "What color do you get when you mix red and blue?",
+    "How many hours are in two days?",
+    "What is the square root of 81?",
+    "What instrument has 88 keys?",
+    "What gas do humans need to breathe?"
+]
+
+# answers are canonical; comparisons are case-insensitive and trimmed
+answers: List[str] = ["purple", "48", "9", "piano", "oxygen"]
+
+
+# ---------------------------
+# Utility / Game functions
+# ---------------------------
+def clean_answer(text: str) -> str:
+    """
+    Normalize user input for comparison.
+    Removes leading/trailing whitespace and lowercases.
+    """
+    return text.strip().lower()
+
+
+def ask_question(monster: str, art: str, question: str, answer: str) -> None:
+    """
+    Ask a single riddle (room) repeatedly until the user provides the correct answer.
+    This function uses a nested loop pattern (outer loop is the room loop in main).
+    """
+    while True:
+        print("\n" + "=" * 60)
+        print(f"You encounter the {monster}!")
+        print(art)
+        print()
+        print("Riddle:")
+        print(question)
+        user_input = clean_answer(input("> "))
+
+        # Accept exact match
+        if user_input == answer:
+            print("\n✨ Your wisdom shines! The monster vanishes in awe.")
+            break
+
+        # Small helpful hints for common input forms:
+        # Accept numeric answers typed as words (e.g., "forty eight" -> "48")? Not automatically.
+        # But accept a few common synonyms where reasonable:
+        synonyms = {
+            "purple": {"violet"},
+            "48": {"forty eight", "forty-eight"},
+            "9": {"nine"},
+            "piano": {"grand piano", "keyboard"},
+            "oxygen": {"o2"}
+        }
+        accepted = False
+        if answer in synonyms:
+            for alt in synonyms[answer]:
+                if user_input == alt:
+                    accepted = True
+                    break
+
+        if accepted:
+            print("\n✨ Your wisdom shines! The monster vanishes in awe.")
+            break
+
+        print("\n😬 The monster snarls… try again!")
+
+
+# ---------------------------
+# Main program
+# ---------------------------
+def main() -> None:
+    print("=" * 60)
+    print("🔮 Welcome to Cryptic Crawl: Director's Cut (2025)")
+    print("Outsmart the monsters. Solve all five riddles to escape the dungeon.")
+    print("=" * 60)
+
+    for i in range(len(monsters)):
+        ask_question(monsters[i], ascii_art[i], questions[i], answers[i])
+
+    print("\n" + "=" * 60)
+    print("🎉 Congratulations! You escaped the dungeon of riddles!")
+    print("Thank you for playing Cryptic Crawl (Director's Cut).")
+    print("=" * 60)
+
+
+if __name__ == "__main__":
+    main()
